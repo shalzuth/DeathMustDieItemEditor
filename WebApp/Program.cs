@@ -12,7 +12,7 @@ builder.Services.AddCors(options =>
     });
 });
 var staticOnly = Environment.UserName.Contains("buildbot");
-staticOnly = true;
+//staticOnly = true;
 if (staticOnly)
 {
     var pages = new List<ResourceInfoBase> { };

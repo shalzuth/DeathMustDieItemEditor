@@ -72,13 +72,14 @@
     }
 </style>
 <h1 style="text-align:center">Death Must Die: Item Editor</h1>
+<h6>Save File Location: %USERPROFILE%/AppData/LocalLow/Realm Archive/Death Must Die/Saves</h6>
 <div class="text-center">
     <div class="input-group mb-3">
         <input class="form-control" type="file" id="fileInput">
         <button id="saveButton" class="btn btn-outline-secondary" type="button">Save</button>
     </div>
     <br/>
-    <div>
+    <div id="saveEditor" style="display:none">
         <div class="input-group mb-3">
             <span class="input-group-text">Gold</span>
             <input id="gold" type="text" class="form-control" aria-label="Amount">
@@ -122,6 +123,7 @@
         console.log(profileState);
         $('#gold').val(profileState.Gold);
         $('#itemList').bootstrapTable('load', profileState.PlayerRepoState.Entries.filter(e=>e.Item.WasOwnedByPlayer));
+        $('#saveEditor').show();
       }
     }
     function itemName(value, row, index, colName){
