@@ -1,0 +1,23 @@
+Loc_UnlockNotifications = {
+  "Shop": 5035696128,
+  "Stash": 33271750656,
+  "Campfire": 57699377152,
+  "template_unlockable": 74582147375104,
+  "template_trait": 74614447710208,
+  "TrophyBlackKnight": 7302406948167680,
+  "TrophyShielder": 7302469560737792,
+  "TrophySkeleton": 7302548241686528,
+  "TrophySummoner": 7302592164438016,
+  "TrophyOoze": 7302643842457600,
+  "TrophyGhost": 7302706522136576,
+  "TrophyVampireLord": 12,
+  "FishingSet": 13,
+  "StarCrux_3": 14,
+  "Talents": 15,
+  "UpgradeShop": 16,
+  "Armory": 17,
+  "Bulletin": 18,
+  "ShardAct1": 19,
+  "ShardAct2": 20,
+  "ShardAct3": 21
+}

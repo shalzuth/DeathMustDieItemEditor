@@ -1,0 +1,21 @@
+Loc_Gods_en = {
+  "1": "Justice",
+  "2": "Winter, Goddess of Cold",
+  "3": "Time",
+  "4": "Summer, Goddess of Fire",
+  "5": "Goddess of Fire",
+  "6": "Mort, Daughter of Death",
+  "7": "Bleak Goddess",
+  "8": "Krom, God of Conquest",
+  "9": "God of Conquest",
+  "10": "Death",
+  "11": "Aisa, Carver of Fate",
+  "12": "Lachi, Allotter of Fate",
+  "13": "Clo, Spinner of Fate",
+  "14": "Moirai, Goddesses of Fate",
+  "15": "Moirai, Goddesses of Fate",
+  "16": "Leigong, God of Lightning",
+  "17": "Lady Justice",
+  "18": "Ninh, Goddess of Earth",
+  "19": "Aegir, God of the Seas"
+}

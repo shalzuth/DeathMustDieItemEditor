@@ -1,0 +1,20 @@
+Loc_Gods = {
+  "Justice": 17,
+  "Serenity": 2,
+  "Time": 3,
+  "Vengeance": 4,
+  "Vengeance0": 5,
+  "Mort": 6,
+  "Mort0": 7,
+  "Conquest": 8,
+  "Conquest0": 9,
+  "Death": 10,
+  "Aisa": 11,
+  "Lachi": 12,
+  "Clo": 13,
+  "Fates": 14,
+  "Empyrean": 15,
+  "Wrath": 16,
+  "Earth": 18,
+  "Water": 19
+}

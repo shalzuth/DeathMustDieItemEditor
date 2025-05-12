@@ -1,0 +1,193 @@
+﻿@page
+@model IndexModel
+@{
+
+    ViewData["Title"] = "Death Must Die: Item Editor";
+    ViewData["Description"] = "Death Must Die: Item Editor - Edit and add items to your Death Must Die save file";
+    ViewData["Image"] = "/card.webp";
+}
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.18.0/dist/bootstrap-table.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://unpkg.com/@@popperjs/core@@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.18.0/dist/bootstrap-table.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="data/Loc_ItemAffixes.js"></script>
+<script src="loc/en/Loc_ItemAffixes.js"></script>
+<script src="data/Loc_ItemUniques.js"></script>
+<script src="loc/en/Loc_ItemUniques.js"></script>
+<script src="data/Loc_ItemSubtypes.js"></script>
+<script src="loc/en/Loc_ItemSubtypes.js"></script>
+<script src="loc/en/Loc_ItemType.js"></script>
+<script src="loc/en/Loc_ItemRarities.js"></script>
+<style>
+    /* Select 2 bootstrap-5 theme override */
+    html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection {
+        background-color: transparent !important;
+        border: 1px solid #495057;
+    }
+
+    html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--single {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23dee2e6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    }
+
+        html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+            color: #dee2e6 !important;
+        }
+
+    html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered .select2-selection__choice {
+        color: #dee2e6 !important;
+        border: 1px solid var(--bs-gray-600);
+    }
+
+    html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered {
+        display: block;
+    }
+
+    html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered .select2-selection__placeholder {
+        color: #dee2e6 !important;
+    }
+
+    html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-dropdown .select2-search .select2-search__field {
+        background-color: transparent !important;
+        color: #dee2e6 !important;
+    }
+
+    html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-dropdown {
+        color: #dee2e6 !important;
+        border: 1px solid #495057 !important;
+        background-color: var(--bs-body-bg);
+    }
+
+        html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option[role=group] .select2-results__group {
+            color: var(--bs-secondary-color) !important;
+        }
+
+    .select2-container--default .select2-results__option[aria-disabled=true] {
+        display: none;
+    }
+</style>
+<h1 style="text-align:center">Death Must Die: Item Editor</h1>
+<div class="text-center">
+    <div class="input-group mb-3">
+        <input class="form-control" type="file" id="fileInput">
+        <button id="saveButton" class="btn btn-outline-secondary" type="button">Save</button>
+    </div>
+    <br/>
+    <div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">Gold</span>
+            <input id="gold" type="text" class="form-control" aria-label="Amount">
+        </div>
+        <div class="table-notresponsive">
+            <table id="itemList" class="table table table-striped table-sm" data-toggle="table" data-pagination="true" data-search="true">
+                <thead>
+                    <tr>
+                        <th data-field="Item" data-formatter="itemName" data-searchable="true">Name</th>
+                        <th data-field="Item" data-formatter="affixes" data-searchable="true">Affixes (checked = 'Enhanced')</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    let saveData = null;
+    let originalSaveData = null;
+    let profileState = null;
+    function swap(json){
+      var ret = {};
+      for(var key in json){
+        ret[json[key]] = key;
+      }
+      return ret;
+    }
+    let swappedLoc_ItemAffixes = swap(Loc_ItemAffixes);
+    document.getElementById('fileInput').addEventListener('change', loadFile);
+    async function loadFile() {
+      if (this.files.length > 0) {
+        var file = this.files[0];
+        const arrayBuffer = await file.arrayBuffer();
+        const uint8Array = new Uint8Array(arrayBuffer);
+        const decompressed = pako.inflateRaw(uint8Array);
+        const decoder = new TextDecoder('utf-8');
+        const jsonString = decoder.decode(decompressed);
+        saveData = JSON.parse(jsonString);
+        originalSaveData = JSON.parse(JSON.stringify(saveData));
+        profileState = JSON.parse(saveData.serializedSaveData.values[0]);
+        console.log(profileState);
+        $('#gold').val(profileState.Gold);
+        $('#itemList').bootstrapTable('load', profileState.PlayerRepoState.Entries.filter(e=>e.Item.WasOwnedByPlayer));
+      }
+    }
+    function itemName(value, row, index, colName){
+        var suffix = '<br/>' + Loc_ItemType_en[value.Type + 1] + '<br/>' + (value.IsUnique ? 'Unique ' : '') + Loc_ItemRarities_en[value.Rarity] + '<br/>Tier ' + (value.TierIndex + 1);
+        if (value.IsUnique) return Loc_ItemUniques_en[Loc_ItemUniques[value.Code]] + suffix;
+        else return Loc_ItemSubtypes_en[Loc_ItemSubtypes[value.SubtypeCode]] + suffix;
+    }
+    var affixSelectorOptions = [];
+    for (const i in Loc_ItemAffixes_en) {
+        var affixDesc = Loc_ItemAffixes_en[i].replace(/\{[^}]*\}/g, '');
+        affixDesc = affixDesc.replaceAll('</color>','ENDSPAN').replaceAll('<color=', '<span style="color:').replaceAll('>', '">').replaceAll('ENDSPAN','</span>');
+       if (affixDesc == '') continue;
+       if (affixDesc == 'Text') continue;
+       if (affixDesc == 'eoline') continue;
+        affixSelectorOptions.push({id: i, text: affixDesc});
+    }
+    function affixes(value, row, index, colName){
+        var tableHtml = `<div class="table"><table id="${value.Code}" class="table table table-striped table-sm"><tbody>`;
+        for(var i = 0; i < value.Affixes.length; i++){
+            var checked = value.Affixes[i].Enhanced ? 'checked' : '';
+            tableHtml += `<tr><td> <input type="hidden" value="${Loc_ItemAffixes_en[Loc_ItemAffixes[value.Affixes[i].Code]]}"><div class="input-group"><select id="select_${value.Code}_${i}" class="form-control select2-action" style="white-space: normal;display: block;""></select><input id="value_${value.Code}_${i}" type="number" style="width:80px" class="form-control" aria-label="Value" min='0' max='1000' value="${value.Affixes[i].Levels}"><div class="input-group-text"><input id="enhanced_${value.Code}_${i}" class="form-check-input mt-0" type="checkbox" value="" ${checked} aria-label="Enhanced"></div></div></td></tr>`;
+        }
+        tableHtml += '</tbody></table></div>';
+        return tableHtml;
+    }
+    $(document).ready(function() {
+        $('#saveButton').click(function() { saveFile(); });
+        $('#itemList').on('post-body.bs.table', function (data) {
+            var data = $('#itemList').bootstrapTable('getData', { useCurrentPage: true });
+            for(var i = 0; i < data.length; i++){
+                for(var a = 0; a < data[i].Item.Affixes.length; a++){
+                   $(`#select_${data[i].Item.Code}_${a}`).select2({
+                        data: affixSelectorOptions,
+                        formatResult: function (d) { return  $(d.text); },
+                        formatSelection: function (d) { return $(d.text); },
+                        formatTooltip: function (d) { return $(d.text); },
+                        escapeMarkup: function(m) { return m; },
+                        theme:'bootstrap-5',
+                        width: '75%'
+                    })
+                    $(`#select_${data[i].Item.Code}_${a}`).val(Loc_ItemAffixes[data[i].Item.Affixes[a].Code]).trigger('change');
+                }
+            }
+        })
+    });
+    function saveFile() {
+        profileState.Gold = $('#gold').val();
+        var tableData = $('#itemList').bootstrapTable('getData');
+        for(var i = 0; i < profileState.PlayerRepoState.Entries.length; i++){
+            var fromTable = tableData.find(d=>d.Id._value == profileState.PlayerRepoState.Entries[i].Id._value);
+            if (fromTable == null) continue;
+            for(var a = 0; a < fromTable.Item.Affixes.length; a++){
+                profileState.PlayerRepoState.Entries[i].Item.Affixes[a].Code = swappedLoc_ItemAffixes[$(`#select_${fromTable.Item.Code}_${a}`).val()];
+                profileState.PlayerRepoState.Entries[i].Item.Affixes[a].Levels = $(`#value_${fromTable.Item.Code}_${a}`).val();
+                profileState.PlayerRepoState.Entries[i].Item.Affixes[a].Enhanced =$(`#enhanced_${fromTable.Item.Code}_${a}`)[0].checked;
+            }
+        }
+        saveData.serializedSaveData.values[0] = JSON.stringify(profileState);
+        const updatedJsonString = JSON.stringify(saveData);
+        const encoder = new TextEncoder();
+        const jsonArray = encoder.encode(updatedJsonString);
+        const compressedData = pako.deflateRaw(jsonArray);
+        const blob = new Blob([compressedData], { type: 'application/octet-stream' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'Slot_0.sav';
+        link.click();
+    }
+</script>

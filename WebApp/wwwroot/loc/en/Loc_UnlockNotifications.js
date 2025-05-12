@@ -1,0 +1,23 @@
+Loc_UnlockNotifications_en = {
+  "5035696128": "Shop",
+  "33271750656": "Stash",
+  "57699377152": "Campfire",
+  "74614447710208": "Perk Unlocked: {0}",
+  "74582147375104": "{0} Unlocked",
+  "7302406948167680": "Black Knight Trophy",
+  "7302469560737792": "Obsidian Shielder Trophy",
+  "7302548241686528": "Skeleton Trophy",
+  "7302592164438016": "Summoner Trophy",
+  "7302643842457600": "Ooze Trophy",
+  "7302706522136576": "Ghost Trophy",
+  "12": "Dracula\u0027s Wing",
+  "13": "Fishing Set",
+  "14": "Star Crux",
+  "15": "Constellarium",
+  "16": "Mysterious Camp",
+  "17": "Armory",
+  "18": "Mailbox",
+  "19": "Outer Circle Waypoint",
+  "20": "Endless Desert Waypoint",
+  "21": "Darkmoor Waypoint"
+}
