@@ -152,6 +152,7 @@
     $(document).ready(function() {
         $('#saveButton').click(function() { saveFile(); });
         $('#itemList').on('post-body.bs.table', function (data) {
+            //var data = $('#itemList').bootstrapTable('getData');
             var data = $('#itemList').bootstrapTable('getData', { useCurrentPage: true });
             for(var i = 0; i < data.length; i++){
                 for(var a = 0; a < data[i].Item.Affixes.length; a++){
@@ -176,9 +177,10 @@
             var fromTable = tableData.find(d=>d.Id._value == profileState.PlayerRepoState.Entries[i].Id._value);
             if (fromTable == null) continue;
             for(var a = 0; a < fromTable.Item.Affixes.length; a++){
+                if ($(`#enhanced_${fromTable.Item.Code}_${a}`)[0] == null) continue;
                 profileState.PlayerRepoState.Entries[i].Item.Affixes[a].Code = swappedLoc_ItemAffixes[$(`#select_${fromTable.Item.Code}_${a}`).val()];
                 profileState.PlayerRepoState.Entries[i].Item.Affixes[a].Levels = $(`#value_${fromTable.Item.Code}_${a}`).val();
-                profileState.PlayerRepoState.Entries[i].Item.Affixes[a].Enhanced =$(`#enhanced_${fromTable.Item.Code}_${a}`)[0].checked;
+                profileState.PlayerRepoState.Entries[i].Item.Affixes[a].Enhanced = $(`#enhanced_${fromTable.Item.Code}_${a}`)[0].checked;
             }
         }
         saveData.serializedSaveData.values[0] = JSON.stringify(profileState);
